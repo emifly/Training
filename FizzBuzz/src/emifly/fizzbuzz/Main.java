@@ -26,27 +26,52 @@ public class Main {
     public static String getGreenText(String text) {
         return GREEN + text + CLEAR;
     }
+
+    static int passedTestCount = 0;
+    static int failedTestCount = 0;
+
+    public static void unitTest(int number, String expectedOutput, String factorisation) {
+        String actualOutput = getNumberOrBuzzwords(number);
+        boolean wasSuccessful = actualOutput.equals(expectedOutput);
+        String testDescription = "Testing " + number;
+        if (factorisation != null)
+            testDescription += " (" + factorisation + ")";
+
+        System.out.println(testDescription);
+        System.out.println("Expected: " + expectedOutput);
+        System.out.println("     Got: " + actualOutput);
+        System.out.println("          " + (wasSuccessful ? getGreenText("Success!") : getRedText("Failure!")));
+        System.out.println();
+
+        if (wasSuccessful)
+            passedTestCount++;
+        else
+            failedTestCount++;
+    }
+
+    public static void unitTest(int number, String expectedOutput) {
+        unitTest(number, expectedOutput, null);
+    }
+
     public static final int OFF = 0;
     public static final int FIZZ = 0b1;
     public static final int FEZZ = 0b10;
     public static final int BUZZ = 0b100;
     public static final int BANG = 0b1000;
     public static final int BONG = 0b10000;
-    public static final String[] buzzwords = {"Fizz", "Fezz", "Buzz", "Bang", "Bong"};
     public static final int[] buzzwordSwitches = {FIZZ, FEZZ, BUZZ, BANG, BONG};
+    public static final String[] buzzwords = {"Fizz", "Fezz", "Buzz", "Bang", "Bong"};
 
     public static String getBuzzwords(int switchesState, boolean isReversed) {
         String buzzwordString = "";
-        int[] forwardIterator = {0, 1, 2, 3, 4};
-        int[] backwardIterator = {4, 3, 2, 1, 0};
-        int[] switchesIterator;
-        int currentSwitch;
+        int currentBuzzwordIndex;
+        int currentSwitchState;
 
-        switchesIterator = isReversed ? backwardIterator : forwardIterator;
-        for (int i = 0; i < 5; i++) {
-            currentSwitch = switchesState & buzzwordSwitches[switchesIterator[i]];
-            if (currentSwitch != 0)
-                buzzwordString += buzzwords[switchesIterator[i]];
+        for (int i = 0; i < buzzwords.length; i++) {
+            currentBuzzwordIndex = isReversed ? (buzzwords.length - i - 1) : i;
+            currentSwitchState = switchesState & buzzwordSwitches[currentBuzzwordIndex];
+            if (currentSwitchState != OFF)
+                buzzwordString += buzzwords[currentBuzzwordIndex];
         }
         return buzzwordString;
     }
@@ -76,32 +101,6 @@ public class Main {
         for (int i = 1; i <= 100; i++) {
             System.out.println(getNumberOrBuzzwords(i));
         }
-    }
-
-    static int passedTestCount = 0;
-    static int failedTestCount = 0;
-
-    public static void unitTest(int number, String expectedOutput, String factorisation) {
-        String actualOutput = getNumberOrBuzzwords(number);
-        boolean wasSuccessful = actualOutput.equals(expectedOutput);
-        String testDescription = "Testing " + number;
-        if (factorisation != null)
-            testDescription += " (" + factorisation + ")";
-
-        System.out.println(testDescription);
-        System.out.println("Expected: " + expectedOutput);
-        System.out.println("     Got: " + actualOutput);
-        System.out.println("          " + (wasSuccessful ? getGreenText("Success!") : getRedText("Failure!")));
-        System.out.println();
-
-        if (wasSuccessful)
-            passedTestCount++;
-        else
-            failedTestCount++;
-    }
-
-    public static void unitTest(int number, String expectedOutput) {
-        unitTest(number, expectedOutput, null);
     }
 
     public static void part2Test() {
